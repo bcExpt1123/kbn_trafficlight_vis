@@ -1,0 +1,7 @@
+{
+  "prefix": "kbnTrafficlightVis",
+  "paths": {
+    "kbnTrafficlightVis": "."
+  },
+  "translations": ["translations/ja-JP.json"]
+}
