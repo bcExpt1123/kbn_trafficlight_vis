@@ -1,7 +1,10 @@
 # kbnTrafficlightVis
 
-A Kibana plugin
 
+A Kibana plugin
+```
+- kibana version 7.10.1
+```
 ---
 
 ## Development
