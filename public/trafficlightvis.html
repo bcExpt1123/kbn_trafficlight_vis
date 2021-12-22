@@ -1,0 +1,278 @@
+<div ng-controller="TrafficLightVisController" class="traffic-light-vis"
+	ng-style="{'font-size':+vis.params.fontSize+(vis.params.proportionalFonts?'vw':'px')}">
+	<!-- NUMBER OF TRAFFIC PER LINES FIXED-->
+	<div ng-show="!vis.params.fixedSize" class="traffic-light-vis" ng-repeat="line in lines">
+		<div ng-repeat="metric in line" class="traffic-light-box" ng-style="computeStyle(metric)">
+			<!-- Traffic-->
+			<div ng-show="vis.params.displayMode=='Traffic'" class="traffic-light-container"
+				ng-style="{'width': vis.params.width+'px', 'height': (2.68 * vis.params.width)+'px' }">
+				<div class="traffic-light">
+					<div class="light red" ng-class="{'on':
+						(!vis.params.invertScale && ((metric.value <= vis.params.redThreshold) || (metric.value > vis.params.max)))
+						|| (vis.params.invertScale && metric.value >= vis.params.redThreshold) }">
+					</div>
+					<div class="light yellow"
+						ng-class="{'on': (!vis.params.invertScale && metric.value > vis.params.redThreshold && metric.value < vis.params.greenThreshold) || (vis.params.invertScale && metric.value < vis.params.redThreshold && metric.value > vis.params.greenThreshold) }">
+					</div>
+					<div class="light green" ng-class="{'on':
+					(!vis.params.invertScale && metric.value >= vis.params.greenThreshold && metric.value <= vis.params.max)
+					|| (vis.params.invertScale && metric.value <= vis.params.greenThreshold) }"></div>
+				</div>
+			</div>
+
+			<!-- MOOD -->
+			<div ng-show="vis.params.displayMode=='Mood'" class="traffic-light-container"
+				ng-style="{'width': vis.params.width+'px', 'height': (vis.params.height)+'px'}">
+				<div>
+					<div style="color:red" ng-show="(!vis.params.invertScale && ((metric.value <= vis.params.redThreshold) || (metric.value > vis.params.max)))
+		|| (vis.params.invertScale && metric.value >= vis.params.redThreshold) ">
+
+						<svg ng-show="vis.params.displayMode=='Mood'" aria-hidden="true" focusable="false"
+							data-prefix="far" data-icon="frown" class="svg-inline--fa fa-frown fa-w-16" role="img"
+							xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
+							<path fill="red"
+								d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-110.3 0-200-89.7-200-200S137.7 56 248 56s200 89.7 200 200-89.7 200-200 200zm-80-216c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm160-64c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32zm-80 128c-40.2 0-78 17.7-103.8 48.6-8.5 10.2-7.1 25.3 3.1 33.8 10.2 8.4 25.3 7.1 33.8-3.1 16.6-19.9 41-31.4 66.9-31.4s50.3 11.4 66.9 31.4c8.1 9.7 23.1 11.9 33.8 3.1 10.2-8.5 11.5-23.6 3.1-33.8C326 321.7 288.2 304 248 304z">
+							</path>
+						</svg>
+					</div>
+					<div style="color:orange"
+						ng-show="(!vis.params.invertScale && metric.value > vis.params.redThreshold && metric.value < vis.params.greenThreshold) || (vis.params.invertScale && metric.value < vis.params.redThreshold && metric.value > vis.params.greenThreshold)">
+						<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="meh"
+							class="svg-inline--fa fa-meh fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 496 512">
+							<path fill="currentColor"
+								d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-110.3 0-200-89.7-200-200S137.7 56 248 56s200 89.7 200 200-89.7 200-200 200zm-80-216c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm160-64c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32zm8 144H160c-13.2 0-24 10.8-24 24s10.8 24 24 24h176c13.2 0 24-10.8 24-24s-10.8-24-24-24z">
+							</path>
+						</svg>
+					</div>
+					<div style="color:green" ng-show='(!vis.params.invertScale && metric.value >= vis.params.greenThreshold && metric.value <= vis.params.max)
+	|| (vis.params.invertScale && metric.value <= vis.params.greenThreshold)'>
+						<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="smile"
+							class="svg-inline--fa fa-smile fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 496 512">
+							<path fill="currentColor"
+								d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-110.3 0-200-89.7-200-200S137.7 56 248 56s200 89.7 200 200-89.7 200-200 200zm-80-216c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm4 72.6c-20.8 25-51.5 39.4-84 39.4s-63.2-14.3-84-39.4c-8.5-10.2-23.7-11.5-33.8-3.1-10.2 8.5-11.5 23.6-3.1 33.8 30 36 74.1 56.6 120.9 56.6s90.9-20.6 120.9-56.6c8.5-10.2 7.1-25.3-3.1-33.8-10.1-8.4-25.3-7.1-33.8 3.1z">
+							</path>
+						</svg>
+					</div>
+				</div>
+			</div>
+
+			<!-- THUMB -->
+			<div ng-show="vis.params.displayMode=='Thumb'" class="traffic-light-container"
+				ng-style="{'width': vis.params.width+'px', 'height': (vis.params.height)+'px'}">
+				<div>
+					<div style="color:red" ng-show="(!vis.params.invertScale && ((metric.value <= vis.params.redThreshold) || (metric.value > vis.params.max)))
+		|| (vis.params.invertScale && metric.value >= vis.params.redThreshold) ">
+
+						<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="thumbs-down"
+							class="svg-inline--fa fa-thumbs-down fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 512 512">
+							<path fill="currentColor" ng-attr-d="{{vis.params.svgThumbDown}}">
+							</path>
+						</svg>
+					</div>
+					<div style="color:orange"
+						ng-show="(!vis.params.invertScale && metric.value > vis.params.redThreshold && metric.value < vis.params.greenThreshold) || (vis.params.invertScale && metric.value < vis.params.redThreshold && metric.value > vis.params.greenThreshold)">
+						<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="thumbs-down"
+							class="svg-inline--fa fa-thumbs-down fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 512 512">
+							<path fill="currentColor" ng-attr-d="{{vis.params.svgThumbDown}}">
+							</path>
+						</svg>
+					</div>
+					<div style="color:green" ng-show='(!vis.params.invertScale && metric.value >= vis.params.greenThreshold && metric.value <= vis.params.max)
+	|| (vis.params.invertScale && metric.value <= vis.params.greenThreshold)'>
+						<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="thumbs-up"
+							class="svg-inline--fa fa-thumbs-up fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 512 512">
+							<path fill="currentColor" ng-attr-d="{{vis.params.svgThumbUp}}">
+							</path>
+						</svg>
+					</div>
+				</div>
+			</div>
+
+			<!-- Icon -->
+			<div ng-show="vis.params.displayMode=='Icon' || vis.params.displayMode=='SVGIcon'" class="traffic-light-container"
+				ng-style="{'width': vis.params.width+'px', 'height': (vis.params.height)+'px'}">
+				<div>
+					<div ng-style="getRed()" ng-show="(!vis.params.invertScale && ((metric.value <= vis.params.redThreshold) || (metric.value > vis.params.max)))
+		|| (vis.params.invertScale && metric.value >= vis.params.redThreshold) ">
+
+						<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="phone-volume"
+							class="svg-inline--fa fa-phone-volume fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg"
+							ng-attr-view_box="{{svgViewBox}}">
+							<path fill="currentColor" ng-attr-d="{{svgIcon}}">
+							</path>
+						</svg>
+					</div>
+					<div ng-style="getOrange()"
+						ng-show="(!vis.params.invertScale && metric.value > vis.params.redThreshold && metric.value < vis.params.greenThreshold) || (vis.params.invertScale && metric.value < vis.params.redThreshold && metric.value > vis.params.greenThreshold)">
+						<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="phone-volume"
+							class="svg-inline--fa fa-phone-volume fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg"
+							ng-attr-view_box="{{svgViewBox}}">
+							<path fill="currentColor" ng-attr-d="{{svgIcon}}">
+							</path>
+						</svg>
+					</div>
+					<div ng-style="getGreen()" ng-show='(!vis.params.invertScale && metric.value >= vis.params.greenThreshold && metric.value <= vis.params.max)
+	|| (vis.params.invertScale && metric.value <= vis.params.greenThreshold)'>
+
+						<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="phone-volume"
+							class="svg-inline--fa fa-phone-volume fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg"
+							ng-attr-view_box="{{svgViewBox}}">
+
+							<path fill="currentColor" ng-attr-d="{{svgIcon}}">
+							</path>
+						</svg>
+					</div>
+				</div>
+			</div>
+
+			<div class="traffic-light-legend" ng-style="computeStyleLegend(metric)"><span
+					ng-show="vis.params.showLabel">{{metric.label}}</span>
+				<div ng-show="vis.params.showValue"
+					ng-style="{'font-size':vis.params.fontSizeMetric+(vis.params.proportionalFonts?'vw':'px'),'color':getValueColor()}">
+					{{metric.value | number:vis.params.precision}} {{vis.params.unit}}</div>
+			</div>
+		</div>
+	</div>
+	<!-- SIZE OF PANEL FIXED-->
+	<div ng-show="vis.params.fixedSize" ng-repeat="metric in records" ng-style="computeStyle(metric)">
+		<!-- TRAFFIC -->
+		<div ng-show="vis.params.displayMode=='Traffic'" class="traffic-light-container"
+			ng-style="{'width': vis.params.width+'px', 'height': (2.68 * vis.params.width)+'px','border-radius':'20px' }">
+			<div class="traffic-light">
+				<div class="light red" ng-class="{'on':
+					(!vis.params.invertScale && ((metric.value <= vis.params.redThreshold) || (metric.value > vis.params.max)))
+					|| (vis.params.invertScale && metric.value >= vis.params.redThreshold) }">
+				</div>
+				<div class="light yellow"
+					ng-class="{'on': (!vis.params.invertScale && metric.value > vis.params.redThreshold && metric.value < vis.params.greenThreshold) || (vis.params.invertScale && metric.value < vis.params.redThreshold && metric.value > vis.params.greenThreshold) }">
+				</div>
+				<div class="light green" ng-class="{'on':
+				(!vis.params.invertScale && metric.value >= vis.params.greenThreshold && metric.value <= vis.params.max)
+				|| (vis.params.invertScale && metric.value <= vis.params.greenThreshold) }"></div>
+			</div>
+		</div>
+
+		<!-- MOOD -->
+		<div ng-show="vis.params.displayMode=='Mood'" class="traffic-light-container"
+			ng-style="{'width': vis.params.width+'px', 'height': (vis.params.height)+'px'}">
+			<div>
+				<div style="color:red" ng-show="(!vis.params.invertScale && ((metric.value <= vis.params.redThreshold) || (metric.value > vis.params.max)))
+					|| (vis.params.invertScale && metric.value >= vis.params.redThreshold) ">
+
+					<svg ng-show="vis.params.displayMode=='Mood'" aria-hidden="true" focusable="false" data-prefix="far"
+						data-icon="frown" class="svg-inline--fa fa-frown fa-w-16" role="img"
+						xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
+						<path fill="red"
+							d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-110.3 0-200-89.7-200-200S137.7 56 248 56s200 89.7 200 200-89.7 200-200 200zm-80-216c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm160-64c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32zm-80 128c-40.2 0-78 17.7-103.8 48.6-8.5 10.2-7.1 25.3 3.1 33.8 10.2 8.4 25.3 7.1 33.8-3.1 16.6-19.9 41-31.4 66.9-31.4s50.3 11.4 66.9 31.4c8.1 9.7 23.1 11.9 33.8 3.1 10.2-8.5 11.5-23.6 3.1-33.8C326 321.7 288.2 304 248 304z">
+						</path>
+					</svg>
+				</div>
+				<div style="color:orange"
+					ng-show="(!vis.params.invertScale && metric.value > vis.params.redThreshold && metric.value < vis.params.greenThreshold) || (vis.params.invertScale && metric.value < vis.params.redThreshold && metric.value > vis.params.greenThreshold)">
+					<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="meh"
+						class="svg-inline--fa fa-meh fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 496 512">
+						<path fill="currentColor"
+							d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-110.3 0-200-89.7-200-200S137.7 56 248 56s200 89.7 200 200-89.7 200-200 200zm-80-216c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm160-64c-17.7 0-32 14.3-32 32s14.3 32 32 32 32-14.3 32-32-14.3-32-32-32zm8 144H160c-13.2 0-24 10.8-24 24s10.8 24 24 24h176c13.2 0 24-10.8 24-24s-10.8-24-24-24z">
+						</path>
+					</svg>
+				</div>
+				<div style="color:green" ng-show='(!vis.params.invertScale && metric.value >= vis.params.greenThreshold && metric.value <= vis.params.max)
+				|| (vis.params.invertScale && metric.value <= vis.params.greenThreshold)'>
+					<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="smile"
+						class="svg-inline--fa fa-smile fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 496 512">
+						<path fill="currentColor"
+							d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-110.3 0-200-89.7-200-200S137.7 56 248 56s200 89.7 200 200-89.7 200-200 200zm-80-216c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32zm4 72.6c-20.8 25-51.5 39.4-84 39.4s-63.2-14.3-84-39.4c-8.5-10.2-23.7-11.5-33.8-3.1-10.2 8.5-11.5 23.6-3.1 33.8 30 36 74.1 56.6 120.9 56.6s90.9-20.6 120.9-56.6c8.5-10.2 7.1-25.3-3.1-33.8-10.1-8.4-25.3-7.1-33.8 3.1z">
+						</path>
+					</svg>
+				</div>
+			</div>
+		</div>
+
+		<!-- THUMB -->
+		<div ng-show="vis.params.displayMode=='Thumb' " class="traffic-light-container"
+			ng-style="{'width': vis.params.width+'px', 'height': (vis.params.height)+'px'}">
+			<div>
+				<div style="color:red" ng-show="(!vis.params.invertScale && ((metric.value <= vis.params.redThreshold) || (metric.value > vis.params.max)))
+					|| (vis.params.invertScale && metric.value >= vis.params.redThreshold) ">
+
+					<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="thumbs-down"
+						class="svg-inline--fa fa-thumbs-down fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 512 512">
+						<path fill="currentColor" ng-attr-d="{{vis.params.svgThumbDown}}">
+						</path>
+					</svg>
+				</div>
+				<div style="color:orange"
+					ng-show="(!vis.params.invertScale && metric.value > vis.params.redThreshold && metric.value < vis.params.greenThreshold) || (vis.params.invertScale && metric.value < vis.params.redThreshold && metric.value > vis.params.greenThreshold)">
+					<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="thumbs-down"
+						class="svg-inline--fa fa-thumbs-down fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 512 512">
+						<path fill="currentColor" ng-attr-d="{{vis.params.svgThumbDown}}">
+						</path>
+					</svg>
+				</div>
+				<div style="color:green" ng-show='(!vis.params.invertScale && metric.value >= vis.params.greenThreshold && metric.value <= vis.params.max)
+				|| (vis.params.invertScale && metric.value <= vis.params.greenThreshold)'>
+					<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="thumbs-up"
+						class="svg-inline--fa fa-thumbs-up fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 512 512">
+						<path fill="currentColor" ng-attr-d="{{vis.params.svgThumbUp}}">
+						</path>
+					</svg>
+				</div>
+			</div>
+		</div>
+
+		<!-- Icon -->
+		<div ng-show="vis.params.displayMode=='Icon' || vis.params.displayMode=='SVGIcon'" class="traffic-light-container"
+			ng-style="{'width': vis.params.width+'px', 'height': (vis.params.height)+'px'}">
+			<div>
+				<div ng-style="getRed()" ng-show="(!vis.params.invertScale && ((metric.value <= vis.params.redThreshold) || (metric.value > vis.params.max)))
+					|| (vis.params.invertScale && metric.value >= vis.params.redThreshold) ">
+
+					<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="phone-volume"
+						class="svg-inline--fa fa-phone-volume fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg"
+						ng-attr-view_box="{{svgViewBox}}">
+						<path fill="currentColor" ng-attr-d="{{svgIcon}}">
+						</path>
+					</svg>
+				</div>
+				<div ng-style="getOrange()"
+					ng-show="(!vis.params.invertScale && metric.value > vis.params.redThreshold && metric.value < vis.params.greenThreshold) || (vis.params.invertScale && metric.value < vis.params.redThreshold && metric.value > vis.params.greenThreshold)">
+					<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="phone-volume"
+						class="svg-inline--fa fa-phone-volume fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg"
+						ng-attr-view_box="{{svgViewBox}}">
+						<path fill="currentColor" ng-attr-d="{{svgIcon}}">
+						</path>
+					</svg>
+				</div>
+				<div ng-style="getGreen()" ng-show='(!vis.params.invertScale && metric.value >= vis.params.greenThreshold && metric.value <= vis.params.max)
+				|| (vis.params.invertScale && metric.value <= vis.params.greenThreshold)'>
+
+					<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="phone-volume"
+						class="svg-inline--fa fa-phone-volume fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg"
+						ng-attr-view_box="{{svgViewBox}}">
+
+						<path fill="currentColor" ng-attr-d="{{svgIcon}}">
+						</path>
+					</svg>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="traffic-light-legend" ng-style="computeStyleLegend(metric)"><span
+				ng-show="vis.params.showLabel">{{metric.label}}</span>
+			<div ng-show="vis.params.showValue"
+				ng-style="{'font-size':vis.params.fontSizeMetric+(vis.params.proportionalFonts?'vw':'px'),'color':getValueColor()}">
+				{{metric.value | number:vis.params.precision}} {{vis.params.unit}}</div>
+		</div>
+	</div>
+</div>

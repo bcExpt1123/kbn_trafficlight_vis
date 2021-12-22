@@ -1,19 +1,31 @@
 import { i18n } from '@kbn/i18n';
-import { AppMountParameters, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
+import { AppMountParameters, AppNavLinkStatus, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
 import {
   KbnTrafficlightVisPluginSetup,
   KbnTrafficlightVisPluginStart,
   AppPluginStartDependencies,
 } from './types';
 import { PLUGIN_NAME } from '../common';
+import { trafficLightDefinition } from './trafficlightvis';
+import { VisualizationsSetup } from '../../../src/plugins/visualizations/public';
+
+/** @internal */
+export interface TablePluginSetupDependencies {
+  visualizations: VisualizationsSetup;
+}
 
 export class KbnTrafficlightVisPlugin
   implements Plugin<KbnTrafficlightVisPluginSetup, KbnTrafficlightVisPluginStart> {
-  public setup(core: CoreSetup): KbnTrafficlightVisPluginSetup {
+  createBaseVisualization: any;
+  public setup(
+    core: CoreSetup,
+    { visualizations }: TablePluginSetupDependencies
+  ): KbnTrafficlightVisPluginSetup {
     // Register an application into the side navigation menu
     core.application.register({
       id: 'kbnTrafficlightVis',
       title: PLUGIN_NAME,
+      navLinkStatus: AppNavLinkStatus.hidden, // imported from `src/core/public`
       async mount(params: AppMountParameters) {
         // Load application bundle
         const { renderApp } = await import('./application');
@@ -23,6 +35,7 @@ export class KbnTrafficlightVisPlugin
         return renderApp(coreStart, depsStart as AppPluginStartDependencies, params);
       },
     });
+    visualizations.createBaseVisualization(trafficLightDefinition(core));
 
     // Return methods that should be available to other plugins
     return {
@@ -36,6 +49,12 @@ export class KbnTrafficlightVisPlugin
       },
     };
   }
+  // public async setup(
+  //   core: CoreSetup,
+  //   { visualizations }: TablePluginSetupDependencies
+  // ): Promise<any> {
+  //   visualizations.createBaseVisualization(trafficLightDefinition(core));
+  // }
 
   public start(core: CoreStart): KbnTrafficlightVisPluginStart {
     return {};

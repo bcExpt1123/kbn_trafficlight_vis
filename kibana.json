@@ -4,6 +4,11 @@
   "kibanaVersion": "kibana",
   "server": false,
   "ui": true,
-  "requiredPlugins": ["navigation"],
+  "requiredPlugins": [
+    "navigation",
+    "kibanaLegacy",
+    "visualizations",
+    "visDefaultEditor"
+  ],
   "optionalPlugins": []
 }
