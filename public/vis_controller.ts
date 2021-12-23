@@ -22,12 +22,11 @@ import $ from 'jquery';
 
 import { VisParams, ExprVis } from '../../../src/plugins/visualizations/public';
 import { getAngularModule } from './get_inner_angular';
-// import { getKibanaLegacy } from './services';
 import { initVisLegacyModule } from './vis_legacy_module';
 
-const innerAngularName = 'kibana/kbn_sankey_vis';
+const innerAngularName = 'kibana/trafficlightvis';
 
-  export function getTrafficLightVisController(core: CoreSetup, context: PluginInitializerContext) {
+export function getTrafficLightVisController(core: CoreSetup, context: PluginInitializerContext) {
   return class EnhancedTableVisualizationController {
     private tableVisModule: IModule | undefined;
     private injector: auto.IInjectorService | undefined;

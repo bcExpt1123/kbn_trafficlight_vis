@@ -1,17 +1,8 @@
-// import './trafficlightvis.less';
-
 import mainTemplate from './trafficlightvis.html';
-import optionsTemplate from './trafficlightvisparams.html';
-// Kibana Dependencies
-// import { CATEGORY } from 'ui/vis/vis_category';
-// import { npSetup } from 'ui/new_platform';
-// import { setup as visualizations } from '../../../src/legacy/core_plugins/visualizations/public/np_ready/public/legacy';
 import { Schemas } from '../../../src/plugins/vis_default_editor/public';
-// import { Schemas } from 'ui/vis/editors/default/schemas';
-// import { TrafficLightVisController } from './trafficlightviscontroller';
-// import { AngularVisController } from 'ui/vis/vis_types/angular_vis_type';
 import { VIS_EVENT_TO_TRIGGER } from '../../../src/plugins/visualizations/public';
 import { getTrafficLightVisController } from './vis_controller';
+import { OptionTemplate } from './components/OptionTemplate';
 
 export const trafficLightDefinition = (core, ctx) => {
   return {
@@ -20,7 +11,6 @@ export const trafficLightDefinition = (core, ctx) => {
     icon: 'visGauge',
     description:
       'Great for one-glance status readings, the traffic light visualization expresses in green / yellow / red the position of a single value in relation to low and high thresholds.',
-    // category: CATEGORY.OTHER,
     visualization: getTrafficLightVisController(core, ctx),
     getSupportedTriggers: () => {
       return [VIS_EVENT_TO_TRIGGER.filter];
@@ -70,7 +60,7 @@ export const trafficLightDefinition = (core, ctx) => {
       template: mainTemplate,
     },
     editorConfig: {
-      optionsTemplate: optionsTemplate,
+      optionsTemplate: OptionTemplate,
       schemas: new Schemas([
         {
           group: 'metrics',
@@ -95,8 +85,5 @@ export const trafficLightDefinition = (core, ctx) => {
         },
       ]),
     },
-    // hierarchicalData: (vis) => {
-    //   return Boolean(vis.params.showPartialRows || vis.params.showMetricsAtAllLevels);
-    // },
   };
 };

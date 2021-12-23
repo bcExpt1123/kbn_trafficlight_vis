@@ -24,12 +24,9 @@ import angular from 'angular';
 // required for `ngSanitize` angular module
 import 'angular-sanitize';
 import 'angular-recursion';
-// import { i18nDirective, i18nFilter, I18nProvider } from '@kbn/i18n/angular';
 import { CoreStart, IUiSettingsClient, PluginInitializerContext } from 'kibana/public';
 import {
   initAngularBootstrap,
-  // PaginateDirectiveProvider,
-  // PaginateControlsDirectiveProvider,
   PrivateProvider,
   watchMultiDecorator,
   KbnAccessibleClickProvider,
@@ -46,7 +43,7 @@ export function getAngularModule(name: string, core: CoreStart, context: PluginI
 
 let initialized = false;
 
-export function getInnerAngular(name = 'kibana/kbn_sankey_vis', core: CoreStart) {
+export function getInnerAngular(name = 'kibana/trafficlightvis', core: CoreStart) {
   if (!initialized) {
     createLocalPrivateModule();
     createLocalConfigModule(core.uiSettings);
